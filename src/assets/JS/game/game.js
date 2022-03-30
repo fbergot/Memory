@@ -1,28 +1,26 @@
-import getImgPath from "../utils/dictionnaryImg";
+import { buildDataOfCard } from "../utils/utils";
+import { state } from "../../../app";
 
 /**
  * Build array of data cards
  * @param {number} numberPairsOfCards
+ * @param {number} numberPerCard
  * @returns {{id: number, path: string}[]}
  */
-export function buildArrayCards(numberPairsOfCards) {
-   const array = [];
-   let i;
-   let y;
+export function buildArrayCards(numberOfElements, numberPerCard) {
+   const arrayOfElements = Array(numberOfElements / numberPerCard)
+      .fill(0)
+      .map((_, index) => {
+         return [buildDataOfCard(index + 1), buildDataOfCard(index + 1)];
+      });
 
-   for (i = 1; i <= numberPairsOfCards; i++) {
-      for (y = 0; y < 2; y++) {
-         array.push({ id: i, path: getImgPath(i) });
-      }
-   }
-
-   return array;
+   return arrayOfElements.flat();
 }
 
 /**
  * Shuffle array of data cards
  * @param {any[]} cardsArray
- * @returns {{id: number, path: string}[]}
+ * @returns {any[]}
  */
 export function shuffleArray(cardsArray) {
    const shuffledArray = [...cardsArray.sort(() => Math.random() - 0.5)];
@@ -35,14 +33,16 @@ export function shuffleArray(cardsArray) {
  * @param {{id: number, path: string}[]} arrayCards
  */
 export function setBoard(target, arrayCards) {
-   let cardsHTML = "";
+   let stringOfCardsHTML = "";
 
    for (let card of arrayCards) {
-      cardsHTML += `
-            <div class='card'><img data-id='${card.id}' class='initCard' src="${card.path}" alt='card to guess'/></div>
+      stringOfCardsHTML += `
+            <div class='card'>
+               <img data-id='${card.id}' class='initCard' src="${card.path}" alt='card to guess'/>
+            </div>
         `;
    }
-   target.innerHTML = cardsHTML;
+   target.innerHTML = stringOfCardsHTML;
 }
 
 /**
@@ -56,4 +56,39 @@ export function setAddEventListener(elements, callback) {
    arrayFromNodeList.forEach((element) => {
       element.addEventListener("click", callback);
    });
+}
+
+export function analyzeGameState(event, state, callbackWhenWin) {
+   const e = event.target;
+
+   e.classList.remove("initCard");
+
+   if (state._state[0]) {
+      if (state._state[0].dataset.id === e.dataset.id) {
+         state._state = [];
+         removeClassCAndCall(false, e, state, callbackWhenWin);
+         return;
+      } else {
+         removeClassCAndCall(true, e, state, callbackWhenWin);
+         return;
+      }
+   }
+   state.addItemInState(e);
+}
+
+function removeClassCAndCall(re_nit, e, state, callback) {
+   if (re_nit) {
+      reInit(e, state);
+   } else {
+      callback();
+   }
+   e.classList.remove("initCard");
+}
+
+function reInit(e, state) {
+   window.setTimeout(() => {
+      state._state[0].classList.add("initCard");
+      e.classList.add("initCard");
+      state._state = [];
+   }, 1000);
 }
