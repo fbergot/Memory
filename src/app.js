@@ -1,14 +1,11 @@
 import "./assets/CSS/index.css";
+import { $ } from "./assets/JS/utils/utils";
 import {
    buildArrayCards,
    shuffleArray,
    setBoard,
    setAddEventListener,
 } from "./assets/JS/game/game";
-
-const $ = (tag, isAll) => {
-   return isAll ? document.querySelectorAll(tag) : document.querySelector(tag);
-};
 
 const board = $("#container");
 const score = $("#score");
@@ -26,7 +23,7 @@ let state = [];
 const handleClickImg = (event) => {
    event.target.classList.remove("initCard");
    if (state[0]) {
-      if (Number(state[0].dataset.id) === Number(event.target.dataset.id)) {
+      if (state[0].dataset.id === event.target.dataset.id) {
          state = [];
          event.target.classList.remove("initCard");
          alert("gagner");
