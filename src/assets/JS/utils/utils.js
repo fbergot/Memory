@@ -8,11 +8,3 @@ import getImgPath from "../utils/dictionnaryImg";
 export function $(tag, All) {
    return All ? document.querySelectorAll(tag) : document.querySelector(tag);
 }
-
-/**
- * @param {number} index
- * @return {{id: number, path: string}}
- */
-export function buildDataOfCard(index) {
-   return { id: index, path: getImgPath(index) };
-}
