@@ -33,16 +33,19 @@ const handleClickImg = (event) => {
          return;
       } else {
          event.target.classList.remove("initCard");
-
-         window.setTimeout(() => {
-            state[0].classList.add("initCard");
-            event.target.classList.add("initCard");
-            state = [];
-         }, 1000);
+         reInit();
          return;
       }
    }
    state.push(event.target);
+
+   function reInit() {
+      window.setTimeout(() => {
+         state[0].classList.add("initCard");
+         event.target.classList.add("initCard");
+         state = [];
+      }, 1000);
+   }
 };
 
 setAddEventListener(cards, handleClickImg);
