@@ -24,21 +24,25 @@ const cards = $(".card img", true);
 let state = [];
 
 const handleClickImg = (event) => {
+   event.target.classList.remove("initCard");
    if (state[0]) {
       if (Number(state[0].dataset.id) === Number(event.target.dataset.id)) {
-         alert("gagner");
          state = [];
          event.target.classList.remove("initCard");
+         alert("gagner");
+         return;
       } else {
+         event.target.classList.remove("initCard");
+
          window.setTimeout(() => {
             state[0].classList.add("initCard");
-            state[1].classList.add("initCard");
+            event.target.classList.add("initCard");
+            state = [];
          }, 1000);
-         state = [];
+         return;
       }
    }
    state.push(event.target);
-   event.target.classList.remove("initCard");
 };
 
 setAddEventListener(cards, handleClickImg);
