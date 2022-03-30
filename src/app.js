@@ -9,20 +9,18 @@ import {
    analyzeGameState,
 } from "./assets/JS/game/game";
 
-const gameState = new State();
+const scoreAndLifeTargetHTML = [$("#score"), $("#life")];
 
-const board = $("#container");
-const score = $("#score");
-const life = $("#life");
+const gameState = new State(3);
 
 const dataCards = buildArrayCards(16, 2);
-const shuffleDataCards = shuffleArray(dataCards);
 
-setBoard(board, shuffleDataCards);
+setBoard($("#container"), shuffleArray(dataCards));
 
 const cards = $(".card img", true);
 
 function handleClickImg(event) {
-   analyzeGameState(event, gameState, () => alert("ok"));
+   analyzeGameState(event, gameState, scoreAndLifeTargetHTML);
 }
-setAddEventListener(cards, handleClickImg);
+
+setAddEventListener(cards, "click", handleClickImg);

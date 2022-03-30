@@ -16,3 +16,11 @@ export function $(tag, All) {
 export function buildDataOfCard(index) {
    return { id: index, path: getImgPath(index) };
 }
+
+/**
+ * Display game data (score, life) in target HTML
+ * @param {[HTMLElement, string | number]} targetAndValue
+ */
+export function displayGameInfos(targetAndValue) {
+   targetAndValue[0].innerText = targetAndValue[1];
+}
