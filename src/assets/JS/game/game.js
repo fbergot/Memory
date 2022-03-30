@@ -58,6 +58,11 @@ export function setAddEventListener(elements, callback) {
    });
 }
 
+/**
+ * @param {Event} event
+ * @param {State} state
+ * @param {() => void} callbackWhenWin
+ */
 export function analyzeGameState(event, state, callbackWhenWin) {
    const e = event.target;
 
