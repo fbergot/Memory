@@ -1,4 +1,5 @@
-import { buildDataOfCard, displayGameInfos } from "../utils/utils";
+import { buildDataOfCard, displayGameInfos, buildTargetsHTML } from "../utils/utils";
+import gameState from "../game/State";
 
 /**
  * Build array of data cards
@@ -41,27 +42,17 @@ export function shuffleArray(cardsArray) {
 export function setBoard(target, arrayCards) {
    let stringOfCardsHTML = "";
 
-   for (let card of arrayCards) {
+   arrayCards.forEach((card, index) => {
       stringOfCardsHTML += `
             <div class='card'>
-               <img data-id='${card.id}' class='initCard' src="${card.path}" alt='card to guess'/>
+               <div data-target="${index}" data-id='${card.id}' class="container-img">
+                  <img data-target="${index}" data-id='${card.id}' src="${card.path}" alt='card to guess'/>
+                  <div data-target="${index}" data-id='${card.id}'  class='filter initCard'></div>
+               </div>
             </div>
         `;
-   }
-   target.innerHTML = stringOfCardsHTML;
-}
-
-/**
- * Add an event listener in all elements in NodeList
- * @param {NodeList} elements
- * @param {() => void} callback
- */
-export function setAddEventListener(elements, typeOfEvent, callback) {
-   const arrayFromNodeList = Array.from(elements);
-
-   arrayFromNodeList.forEach((element) => {
-      element.addEventListener(typeOfEvent, callback);
    });
+   target.innerHTML = stringOfCardsHTML;
 }
 
 /**
@@ -69,25 +60,40 @@ export function setAddEventListener(elements, typeOfEvent, callback) {
  * @param {State} state
  * @param {() => void} callbackWhenWin
  */
-export function analyzeGameState(event, state, scoreAndLifeTargetHTML) {
-   const target = event.target;
+export function analyzeGameState(event, gameState, scoreAndLifeTargetHTML) {
+   const target = event.target.offsetParent.children[0].children[0];
+   const keyCurrCardTry = target.dataset.target;
 
-   target.classList.remove("initCard");
+   event.target.classList.remove("initCard");
 
-   if (state._state[0]) {
-      if (state._state[0].dataset.id === target.dataset.id) {
-         state._state = [];
-         removeClassCAndCall(false, target, state, () =>
-            winOrLose(state, scoreAndLifeTargetHTML, "win")
-         );
-         return;
-      } else {
-         winOrLose(state, scoreAndLifeTargetHTML, "lose");
-         removeClassCAndCall(true, target, state);
-         return;
-      }
+   if (~gameState._cardsFinded.indexOf(keyCurrCardTry)) {
+      alert("Vous ne pouvez pas jouer cette carte !");
+      gameState.reInitCardsFinded();
+      return;
    }
-   state.addItemInState(target);
+
+   if (gameState._state[0]) {
+      if (gameState._state[0].dataset.id === target.dataset.id) {
+         removeListener([event.target, gameState._state[0]], "click", handleClickImg);
+         gameState._state = [];
+         removeClassCAndCall(
+            false,
+            event.target,
+            gameState,
+            () => winOrLose(gameState, scoreAndLifeTargetHTML, "win"),
+            event.target
+         );
+      } else {
+         winOrLose(gameState, scoreAndLifeTargetHTML, "lose");
+         removeClassCAndCall(true, event.target, gameState, "", event.target);
+      }
+      gameState.reInitCardsFinded();
+      gameState.addCardsFinded(keyCurrCardTry);
+      return;
+   }
+   // also beginning
+   gameState.addCardsFinded(keyCurrCardTry);
+   gameState.addItemInState(event.target);
 }
 
 /**
@@ -96,13 +102,12 @@ export function analyzeGameState(event, state, scoreAndLifeTargetHTML) {
  * @param {State} state
  * @param {() => void} callback
  */
-function removeClassCAndCall(re_nit, target, state, callback) {
+function removeClassCAndCall(re_nit, target, state, callback, filterELement) {
    if (re_nit) {
-      reInit(target, state, 1000);
+      reInit(target, state, 1000, filterELement);
    } else {
       callback();
    }
-   target.classList.remove("initCard");
 }
 
 /**
@@ -111,10 +116,10 @@ function removeClassCAndCall(re_nit, target, state, callback) {
  * @param {State} state
  * @param {number} timeBeforeReinit (in ms)
  */
-function reInit(target, state, timeBeforeReinit) {
+function reInit(target, state, timeBeforeReinit, filterTarget) {
    window.setTimeout(() => {
       state._state[0].classList.add("initCard");
-      target.classList.add("initCard");
+      filterTarget.classList.add("initCard");
       state._state = [];
    }, timeBeforeReinit);
 }
@@ -135,7 +140,7 @@ function winOrLose(state, targetsHTML, action) {
          alert("lose");
          break;
       default:
-         throw Error("Bad parameter action");
+         throw Error(`Bad parameter action, given: ${action}`);
    }
 }
 
@@ -150,15 +155,47 @@ function updateGameState(target, scoreOrLife, state) {
 
    switch (scoreOrLife) {
       case "score":
-         state._score += 10;
+         state.scoreIncrement();
          displayGameInfos([target[0], state._score]);
          break;
       case "life":
-         state._life -= 1;
+         state.lifeDecrement();
          lifeText = state._life <= 1 ? `Vie: ${state._life}` : `Vies: ${state._life}`;
          displayGameInfos([target[1], lifeText]);
          break;
       default:
-         throw Error("bad parameter scoreOrLife");
+         throw Error(`bad parameter scoreOrLife, given: ${scoreOrLife}`);
    }
+}
+
+export function handleClickImg(event) {
+   analyzeGameState(event, gameState, buildTargetsHTML());
+}
+
+/**
+ * Add an event listener in all elements in NodeList
+ * @param {NodeList} elements
+ * @param {string} typeOfEvent
+ * @param {() => void} callback
+ */
+export function setAddEventListener(elements, typeOfEvent, callback) {
+   const arrayFromNodeList = Array.from(elements);
+
+   arrayFromNodeList.forEach((element) => {
+      element.addEventListener(typeOfEvent, callback, {
+         useCapture: false,
+      });
+   });
+}
+
+/**
+ * Add an event listener in all elements in NodeList
+ * @param {HTMLElement} elements
+ * @param {string} typeOfEvent
+ * @param {() => void} callback
+ */
+export function removeListener(elements, typeOfEvent, callback) {
+   elements.forEach((element) => {
+      element.removeEventListener(typeOfEvent, callback, true);
+   });
 }

@@ -3,11 +3,15 @@ class State {
    #score;
    #life;
    #lifesPerDefault = 3;
+   #incrementScoreRate = 10;
+   #cardsFinded;
 
-   constructor(numberOfLife) {
+   constructor(numberOfLife, incScoreRate) {
       this.#state = [];
       this.#score = 0;
       this.#life = numberOfLife ?? this.#lifesPerDefault;
+      this.#incrementScoreRate = incScoreRate ?? this.#incrementScoreRate;
+      this.#cardsFinded = [];
    }
 
    get _state() {
@@ -22,16 +26,32 @@ class State {
       return this.#score;
    }
 
-   set _score(value) {
-      this.#score = value;
-   }
-
    get _life() {
       return this.#life;
    }
 
-   set _life(value) {
-      this.#life = value;
+   get incrementScoreRate() {
+      return this.#incrementScoreRate;
+   }
+
+   get _cardsFinded() {
+      return this.#cardsFinded;
+   }
+
+   addCardsFinded(value) {
+      this.#cardsFinded.push(value);
+   }
+
+   reInitCardsFinded() {
+      this.#cardsFinded = [];
+   }
+
+   scoreIncrement() {
+      this.#score += this.#incrementScoreRate;
+   }
+
+   lifeDecrement() {
+      this.#life -= 1;
    }
 
    addItemInState(item) {
@@ -39,4 +59,4 @@ class State {
    }
 }
 
-export default State;
+export default new State(3);

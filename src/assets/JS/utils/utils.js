@@ -24,3 +24,7 @@ export function buildDataOfCard(index) {
 export function displayGameInfos(targetAndValue) {
    targetAndValue[0].innerText = targetAndValue[1];
 }
+
+export function buildTargetsHTML() {
+   return [$("#score"), $("#life")];
+}
