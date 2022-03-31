@@ -14,6 +14,16 @@ class State {
       this.#cardsFinded = [];
    }
 
+   isOver() {
+      if (this.#life === 0) {
+         return [true, "end_lose"];
+      }
+      if ((16 / 2) * 10 === this._score) {
+         return [true, "end_win"];
+      }
+      return [false, null];
+   }
+
    get _state() {
       return this.#state;
    }
@@ -59,4 +69,6 @@ class State {
    }
 }
 
-export default new State(3);
+const newState = new State(3);
+
+export default newState;

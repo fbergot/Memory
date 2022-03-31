@@ -12,6 +12,6 @@ const dataCards = buildArrayCards(16, 2);
 
 setBoard($("#container"), shuffleArray(dataCards));
 
-const cards = $(".card", true);
+const cards = $("#filter", true);
 
 setAddEventListener(cards, "click", handleClickImg);

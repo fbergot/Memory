@@ -28,3 +28,15 @@ export function displayGameInfos(targetAndValue) {
 export function buildTargetsHTML() {
    return [$("#score"), $("#life")];
 }
+
+export function buildAndDisplayPopup(target, message) {
+   const container = document.createElement("div");
+   container.classList.add("popup");
+   const stringHTMLPopup = `
+      <h2>${message}</h2>
+      <div class='cont-but>
+         <button type='button' id='reload'>Rejouer</button>
+      </div>`;
+   container.innerHTML = stringHTMLPopup;
+   target.appendChild(container);
+}

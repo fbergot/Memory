@@ -1,4 +1,10 @@
-import { buildDataOfCard, displayGameInfos, buildTargetsHTML } from "../utils/utils";
+import {
+   buildDataOfCard,
+   displayGameInfos,
+   buildTargetsHTML,
+   $,
+   buildAndDisplayPopup,
+} from "../utils/utils";
 import gameState from "../game/State";
 
 /**
@@ -9,6 +15,7 @@ import gameState from "../game/State";
  */
 export function buildArrayCards(numberOfElements, numberPerCard) {
    const ratioForBuildInitArray = numberOfElements / numberPerCard;
+
    if (ratioForBuildInitArray % 1 !== 0) {
       throw Error(
          `Ratio numberElements / numberPerCard must be integer, find: ${ratioForBuildInitArray}`
@@ -30,8 +37,7 @@ export function buildArrayCards(numberOfElements, numberPerCard) {
  * @returns {any[]} (new Array)
  */
 export function shuffleArray(cardsArray) {
-   const shuffledArray = [...cardsArray.sort(() => Math.random() - 0.5)];
-   return shuffledArray;
+   return [...cardsArray.sort(() => Math.random() - 0.5)];
 }
 
 /**
@@ -45,14 +51,18 @@ export function setBoard(target, arrayCards) {
    arrayCards.forEach((card, index) => {
       stringOfCardsHTML += `
             <div class='card'>
-               <div data-target="${index}" data-id='${card.id}' class="container-img">
-                  <img data-target="${index}" data-id='${card.id}' src="${card.path}" alt='card to guess'/>
-                  <div data-target="${index}" data-id='${card.id}'  class='filter initCard'></div>
+               <div class="container-img">
+                  <img src="${card.path}" alt='card to guess'/>
+                  <div data-target="${index}" data-id='${card.id}' id="filter" class='filter initCard'></div>
                </div>
             </div>
         `;
    });
    target.innerHTML = stringOfCardsHTML;
+}
+
+export function handleClickImg(event) {
+   analyzeGameState(event, gameState, buildTargetsHTML());
 }
 
 /**
@@ -61,39 +71,44 @@ export function setBoard(target, arrayCards) {
  * @param {() => void} callbackWhenWin
  */
 export function analyzeGameState(event, gameState, scoreAndLifeTargetHTML) {
-   const target = event.target.offsetParent.children[0].children[0];
+   const target = event.target;
    const keyCurrCardTry = target.dataset.target;
 
-   event.target.classList.remove("initCard");
-
-   if (~gameState._cardsFinded.indexOf(keyCurrCardTry)) {
-      alert("Vous ne pouvez pas jouer cette carte !");
-      gameState.reInitCardsFinded();
-      return;
-   }
-
+   target.classList.remove("initCard");
    if (gameState._state[0]) {
       if (gameState._state[0].dataset.id === target.dataset.id) {
-         removeListener([event.target, gameState._state[0]], "click", handleClickImg);
+         removeListener([target, gameState._state[0]], "click", handleClickImg);
          gameState._state = [];
-         removeClassCAndCall(
-            false,
-            event.target,
-            gameState,
-            () => winOrLose(gameState, scoreAndLifeTargetHTML, "win"),
-            event.target
-         );
+
+         removeClassCAndCall(false, target, gameState, () => {
+            winOrLose(
+               gameState,
+               scoreAndLifeTargetHTML,
+               `${
+                  gameState.isOver()[0] && gameState.isOver()[1] === "end_win"
+                     ? "end_win"
+                     : "win"
+               }`
+            );
+         });
       } else {
-         winOrLose(gameState, scoreAndLifeTargetHTML, "lose");
-         removeClassCAndCall(true, event.target, gameState, "", event.target);
+         winOrLose(
+            gameState,
+            scoreAndLifeTargetHTML,
+            `${
+               gameState.isOver()[0] && gameState.isOver()[1] === "end_lose"
+                  ? "end_lose"
+                  : "lose"
+            }`
+         );
+         removeClassCAndCall(true, target, gameState, "");
       }
       gameState.reInitCardsFinded();
       gameState.addCardsFinded(keyCurrCardTry);
       return;
    }
    // also beginning
-   gameState.addCardsFinded(keyCurrCardTry);
-   gameState.addItemInState(event.target);
+   gameState.addItemInState(target);
 }
 
 /**
@@ -102,9 +117,9 @@ export function analyzeGameState(event, gameState, scoreAndLifeTargetHTML) {
  * @param {State} state
  * @param {() => void} callback
  */
-function removeClassCAndCall(re_nit, target, state, callback, filterELement) {
+function removeClassCAndCall(re_nit, target, state, callback) {
    if (re_nit) {
-      reInit(target, state, 1000, filterELement);
+      reInit(target, state, 1000);
    } else {
       callback();
    }
@@ -116,10 +131,10 @@ function removeClassCAndCall(re_nit, target, state, callback, filterELement) {
  * @param {State} state
  * @param {number} timeBeforeReinit (in ms)
  */
-function reInit(target, state, timeBeforeReinit, filterTarget) {
+function reInit(target, state, timeBeforeReinit) {
    window.setTimeout(() => {
       state._state[0].classList.add("initCard");
-      filterTarget.classList.add("initCard");
+      target.classList.add("initCard");
       state._state = [];
    }, timeBeforeReinit);
 }
@@ -131,13 +146,19 @@ function reInit(target, state, timeBeforeReinit, filterTarget) {
  */
 function winOrLose(state, targetsHTML, action) {
    switch (action) {
+      case "end_lose":
+         $("#game-cont").classList.add("blur");
+         createPopUp($("main"), false, state._score);
+         break;
+      case "end_win":
+         $("#game-cont").classList.add("blur");
+         createPopUp($("main"), true, state._score);
+         break;
       case "win":
          updateGameState(targetsHTML, "score", state);
-         alert("win");
          break;
       case "lose":
          updateGameState(targetsHTML, "life", state);
-         alert("lose");
          break;
       default:
          throw Error(`Bad parameter action, given: ${action}`);
@@ -168,10 +189,6 @@ function updateGameState(target, scoreOrLife, state) {
    }
 }
 
-export function handleClickImg(event) {
-   analyzeGameState(event, gameState, buildTargetsHTML());
-}
-
 /**
  * Add an event listener in all elements in NodeList
  * @param {NodeList} elements
@@ -182,9 +199,7 @@ export function setAddEventListener(elements, typeOfEvent, callback) {
    const arrayFromNodeList = Array.from(elements);
 
    arrayFromNodeList.forEach((element) => {
-      element.addEventListener(typeOfEvent, callback, {
-         useCapture: false,
-      });
+      element.addEventListener(typeOfEvent, callback, false);
    });
 }
 
@@ -196,6 +211,21 @@ export function setAddEventListener(elements, typeOfEvent, callback) {
  */
 export function removeListener(elements, typeOfEvent, callback) {
    elements.forEach((element) => {
-      element.removeEventListener(typeOfEvent, callback, true);
+      element.removeEventListener(typeOfEvent, callback, false);
    });
+}
+
+function createPopUp(target, winOrLose, score) {
+   console.log(target, winOrLose, score);
+   let message;
+
+   switch (true) {
+      case winOrLose === true:
+         message = `Vous avez gagné ! votre score: ${score}`;
+         buildAndDisplayPopup(target, message);
+         break;
+      default:
+         message = `Vous avez perdu ! votre score: ${score}`;
+         buildAndDisplayPopup(target, message);
+   }
 }
