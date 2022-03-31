@@ -31,12 +31,16 @@ export function buildTargetsHTML() {
 
 export function buildAndDisplayPopup(target, message) {
    const container = document.createElement("div");
+   const h2 = document.createElement("h2");
+   const but = document.createElement("button");
+   h2.innerText = message;
+   but.innerText = "Rejouer";
+   container.appendChild(h2);
+   container.appendChild(but);
+
    container.classList.add("popup");
-   const stringHTMLPopup = `
-      <h2>${message}</h2>
-      <div class='cont-but>
-         <button type='button' id='reload'>Rejouer</button>
-      </div>`;
-   container.innerHTML = stringHTMLPopup;
+   h2.classList.add("popup-h2");
+   but.classList.add("popup-but");
+
    target.appendChild(container);
 }

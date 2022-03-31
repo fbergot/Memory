@@ -204,7 +204,7 @@ export function setAddEventListener(elements, typeOfEvent, callback) {
 }
 
 /**
- * Add an event listener in all elements in NodeList
+ * Add an event listener on all elements in a NodeList
  * @param {HTMLElement} elements
  * @param {string} typeOfEvent
  * @param {() => void} callback
@@ -215,17 +215,24 @@ export function removeListener(elements, typeOfEvent, callback) {
    });
 }
 
+/**
+ * @param {HTMLElement} target
+ * @param {boolean} winOrLose
+ * @param {number} score
+ */
 function createPopUp(target, winOrLose, score) {
-   console.log(target, winOrLose, score);
    let message;
-
    switch (true) {
-      case winOrLose === true:
-         message = `Vous avez gagné ! votre score: ${score}`;
+      case winOrLose:
+         message = strMess("gagné", score);
          buildAndDisplayPopup(target, message);
          break;
-      default:
-         message = `Vous avez perdu ! votre score: ${score}`;
+      case !winOrLose:
+         message = strMess("perdu", score);
          buildAndDisplayPopup(target, message);
    }
+}
+
+function strMess(wOrL, score) {
+   return `Vous avez ${wOrL} ! votre score: ${score}`;
 }
