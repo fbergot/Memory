@@ -2,26 +2,16 @@ class State {
    #state;
    #score;
    #life;
-   #lifesPerDefault = 3;
    #incrementScoreRate = 10;
    #cardsFinded;
+   #numberOfCards = 0;
 
-   constructor(numberOfLife, incScoreRate) {
+   constructor(numberOfLife = 8, incScoreRate) {
       this.#state = [];
       this.#score = 0;
-      this.#life = numberOfLife ?? this.#lifesPerDefault;
+      this.#life = numberOfLife;
       this.#incrementScoreRate = incScoreRate ?? this.#incrementScoreRate;
       this.#cardsFinded = [];
-   }
-
-   isOver() {
-      if (this.#life === 0) {
-         return [true, "end_lose"];
-      }
-      if ((16 / 2) * 10 === this._score) {
-         return [true, "end_win"];
-      }
-      return [false, null];
    }
 
    get _state() {
@@ -48,6 +38,20 @@ class State {
       return this.#cardsFinded;
    }
 
+   set numberOfCard(value) {
+      this.#numberOfCards = value;
+   }
+
+   isOver() {
+      if (this.#life === 0) {
+         return true;
+      }
+      if ((this.#numberOfCards / 2) * this.#incrementScoreRate === this.#score) {
+         return true;
+      }
+      return false;
+   }
+
    addCardsFinded(value) {
       this.#cardsFinded.push(value);
    }
@@ -69,6 +73,6 @@ class State {
    }
 }
 
-const newState = new State(3);
+const newState = new State();
 
 export default newState;

@@ -14,11 +14,12 @@ import gameState from "../game/State";
  * @returns {{id: number, path: string}[]}
  */
 export function buildArrayCards(numberOfElements, numberPerCard) {
-   const ratioForBuildInitArray = numberOfElements / numberPerCard;
+   gameState.numberOfCard = numberOfElements;
 
+   const ratioForBuildInitArray = numberOfElements / numberPerCard;
    if (ratioForBuildInitArray % 1 !== 0) {
       throw Error(
-         `Ratio numberElements / numberPerCard must be integer, find: ${ratioForBuildInitArray}`
+         `Ratio numberElements / numberPerCard must be an integer, find: ${ratioForBuildInitArray}`
       );
    }
 
@@ -75,54 +76,22 @@ export function analyzeGameState(event, gameState, scoreAndLifeTargetHTML) {
    const keyCurrCardTry = target.dataset.target;
 
    target.classList.remove("initCard");
+
    if (gameState._state[0]) {
       if (gameState._state[0].dataset.id === target.dataset.id) {
          removeListener([target, gameState._state[0]], "click", handleClickImg);
          gameState._state = [];
-
-         removeClassCAndCall(false, target, gameState, () => {
-            winOrLose(
-               gameState,
-               scoreAndLifeTargetHTML,
-               `${
-                  gameState.isOver()[0] && gameState.isOver()[1] === "end_win"
-                     ? "end_win"
-                     : "win"
-               }`
-            );
-         });
+         winOrLose(gameState, scoreAndLifeTargetHTML, "win");
       } else {
-         winOrLose(
-            gameState,
-            scoreAndLifeTargetHTML,
-            `${
-               gameState.isOver()[0] && gameState.isOver()[1] === "end_lose"
-                  ? "end_lose"
-                  : "lose"
-            }`
-         );
-         removeClassCAndCall(true, target, gameState, "");
+         winOrLose(gameState, scoreAndLifeTargetHTML, "lose");
+         reInitAfterTry(target, gameState, 1000);
       }
       gameState.reInitCardsFinded();
       gameState.addCardsFinded(keyCurrCardTry);
       return;
    }
-   // also beginning
+   // also in beginning
    gameState.addItemInState(target);
-}
-
-/**
- * @param {boolean} re_nit
- * @param {Event} e
- * @param {State} state
- * @param {() => void} callback
- */
-function removeClassCAndCall(re_nit, target, state, callback) {
-   if (re_nit) {
-      reInit(target, state, 1000);
-   } else {
-      callback();
-   }
 }
 
 /**
@@ -131,7 +100,7 @@ function removeClassCAndCall(re_nit, target, state, callback) {
  * @param {State} state
  * @param {number} timeBeforeReinit (in ms)
  */
-function reInit(target, state, timeBeforeReinit) {
+function reInitAfterTry(target, state, timeBeforeReinit) {
    window.setTimeout(() => {
       state._state[0].classList.add("initCard");
       target.classList.add("initCard");
@@ -146,19 +115,19 @@ function reInit(target, state, timeBeforeReinit) {
  */
 function winOrLose(state, targetsHTML, action) {
    switch (action) {
-      case "end_lose":
-         $("#game-cont").classList.add("blur");
-         createPopUp($("main"), false, state._score);
-         break;
-      case "end_win":
-         $("#game-cont").classList.add("blur");
-         createPopUp($("main"), true, state._score);
-         break;
       case "win":
          updateGameState(targetsHTML, "score", state);
+         if (state.isOver()) {
+            $("#game-cont").classList.add("blur");
+            createPopUp($("main"), true, state._score);
+         }
          break;
       case "lose":
          updateGameState(targetsHTML, "life", state);
+         if (state.isOver()) {
+            $("#game-cont").classList.add("blur");
+            createPopUp($("main"), false, state._score);
+         }
          break;
       default:
          throw Error(`Bad parameter action, given: ${action}`);

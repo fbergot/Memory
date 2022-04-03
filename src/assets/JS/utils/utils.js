@@ -29,12 +29,19 @@ export function buildTargetsHTML() {
    return [$("#score"), $("#life")];
 }
 
+/**
+ * @export
+ * @param {HTMLElement} target
+ * @param {string} message
+ */
 export function buildAndDisplayPopup(target, message) {
    const container = document.createElement("div");
    const h2 = document.createElement("h2");
    const but = document.createElement("button");
+
    h2.innerText = message;
    but.innerText = "Rejouer";
+
    container.appendChild(h2);
    container.appendChild(but);
 

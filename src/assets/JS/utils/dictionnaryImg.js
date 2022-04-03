@@ -29,5 +29,6 @@ export default function getImgPath(index) {
    if (stringIndex in dictionaryImagesPath) {
       return dictionaryImagesPath[stringIndex];
    }
-   throw Error("Bad index");
+
+   throw Error(`Bad index, given: ${index}`);
 }

@@ -1,5 +1,6 @@
 import "./assets/CSS/index.css";
-import { $ } from "./assets/JS/utils/utils";
+import { $, displayGameInfos } from "./assets/JS/utils/utils";
+import State from "./assets/JS/game/State";
 import {
    buildArrayCards,
    shuffleArray,
@@ -12,6 +13,8 @@ const dataCards = buildArrayCards(16, 2);
 
 setBoard($("#container"), shuffleArray(dataCards));
 
-const cards = $("#filter", true);
+const filterOncards = $("#filter", true);
 
-setAddEventListener(cards, "click", handleClickImg);
+displayGameInfos([$("#life"), `Vies: ${State._life}`]);
+
+setAddEventListener(filterOncards, "click", handleClickImg);
