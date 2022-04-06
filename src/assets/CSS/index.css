@@ -1,10 +1,12 @@
 :root {
    --height: 75vh;
    --width: 55vw;
+   --roboto: "Roboto", sans-serif;
 }
 
 html,
 body {
+   box-sizing: border-box;
    padding: 0;
    margin: 0;
 }
@@ -29,6 +31,7 @@ main {
 }
 
 .container-state {
+   font-family: var(--roboto);
    position: relative;
    display: flex;
    justify-content: space-around;
@@ -55,6 +58,7 @@ main {
    position: relative;
    margin: 1px;
 }
+
 .card .container-img {
    width: 100%;
    height: 100%;
@@ -95,41 +99,94 @@ main {
 
 .score,
 .life {
+   font-family: var(--roboto);
+   font-weight: 400;
    font-size: 1.5rem;
    color: #fff;
-   font-weight: 600;
    padding: 1rem 0.5rem;
 }
 
 .popup {
+   font-family: var(--roboto);
+   font-weight: 400;
    position: absolute;
    top: 50vh;
    left: 20%;
    right: 20%;
-   background-color: #fff;
+   color: #000;
+   background-color: rgb(177, 212, 235);
    z-index: 5000;
    transform: translateY(-50%);
    display: flex;
    flex-direction: column;
    justify-content: center;
    align-items: center;
+   border-radius: 0.5rem;
+   border: 2px solid rgb(85, 83, 83);
 }
 
 .popup-h2 {
-   color: #000;
+   font-weight: 400;
+
+   color: inherit;
    text-align: center;
 }
 
 .popup-but {
-   width: 100%;
-   margin: auto;
+   border-radius: 0.5rem;
+   color: #fff;
+   /* width: 2rem; */
+   background-color: rgba(112, 114, 206, 0.8);
+   margin: 0.5rem auto;
    padding: 0.5rem;
-   border: none;
-   border: 1px solid black;
-   background-color: burlywood;
+   border: 1px solid transparent;
+   /* background-color: burlywood; */
    cursor: pointer;
 }
 
+.popup-but:hover {
+   border: 1px solid rgb(248, 245, 242);
+}
+
+.popup:hover {
+   transition: all 0.3s;
+   border: 2px solid rgb(43, 43, 219);
+}
+
 .blur {
-   filter: blur(0.2) opacity(0.7);
+   filter: blur(0.1rem) opacity(0.7);
+}
+
+@media screen and (max-width: 420px) {
+   .game-cont {
+      align-items: center;
+      justify-content: center;
+   }
+   .container {
+      display: flex;
+      flex-wrap: wrap;
+      width: calc(var(--width) + 135px);
+      height: calc(var(--height) + 15px);
+      max-height: 90vh;
+      align-items: center;
+      /* border: 1px solid blue; */
+   }
+
+   .container-state {
+      width: 80%;
+   }
+
+   .score,
+   .life {
+      margin: 1rem;
+   }
+
+   .card {
+      width: calc((var(--width) + 135px) / 3.12);
+      height: calc(var(--height) / 4);
+      overflow: hidden;
+      border: 1px solid #fff;
+      position: relative;
+      margin: 1px;
+   }
 }

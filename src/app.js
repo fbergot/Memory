@@ -9,7 +9,12 @@ import {
    handleClickImg,
 } from "./assets/JS/game/game";
 
-const dataCards = buildArrayCards(16, 2);
+let nbCards = 16;
+
+if (window.innerWidth < 450) {
+   nbCards = 12;
+}
+const dataCards = buildArrayCards(nbCards, 2);
 
 setBoard($("#container"), shuffleArray(dataCards));
 
