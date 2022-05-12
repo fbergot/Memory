@@ -26,6 +26,10 @@ class State {
       return this.#score;
    }
 
+   set _score(newScore) {
+      this.#score = newScore;
+   }
+
    get _life() {
       return this.#life;
    }

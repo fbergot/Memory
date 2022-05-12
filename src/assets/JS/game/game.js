@@ -96,7 +96,7 @@ export function analyzeGameState(event, gameState, scoreAndLifeTargetHTML) {
 
 /**
  * Re init state and add css class on target HTML
- * @param {Event} e
+ * @param {HTMLElement} target
  * @param {State} state
  * @param {number} timeBeforeReinit (in ms)
  */
@@ -114,12 +114,16 @@ function reInitAfterTry(target, state, timeBeforeReinit) {
  * @param {string} action
  */
 function winOrLose(state, targetsHTML, action) {
+   let scoreMultiplyPerLife;
+
    switch (action) {
       case "win":
          updateGameState(targetsHTML, "score", state);
          if (state.isOver()) {
+            scoreMultiplyPerLife = state._score * state._life;
             $("#game-cont").classList.add("blur");
-            createPopUp($("main"), true, state._score);
+            displayGameInfos([targetsHTML[0], scoreMultiplyPerLife]);
+            createPopUp($("main"), true, scoreMultiplyPerLife);
          }
          break;
       case "lose":
