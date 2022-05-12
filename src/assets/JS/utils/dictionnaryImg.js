@@ -24,11 +24,11 @@ const dictionaryImagesPath = {
  * @returns {string}
  */
 export default function getImgPath(index) {
-   const stringIndex = index.toString();
+   const stringIndex = "" + index;
 
    if (stringIndex in dictionaryImagesPath) {
       return dictionaryImagesPath[stringIndex];
    }
 
-   throw Error(`Bad index, given: ${index}`);
+   throw Error(`Bad index for path image, given: ${index}`);
 }

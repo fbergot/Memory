@@ -1,8 +1,9 @@
 import getImgPath from "../utils/dictionnaryImg";
+
 /**
- * Return an or many HTML elements
+ * Return an or many HTML elements (targeting like jQuery lol)
  * @param {string} tag
- * @param {true | undefined} isAll
+ * @param {true | undefined} All
  * @return {HTMLElement | NodeList}
  */
 export function $(tag, All) {
@@ -30,7 +31,6 @@ export function buildTargetsHTML() {
 }
 
 /**
- * @export
  * @param {HTMLElement} target
  * @param {string} message
  */

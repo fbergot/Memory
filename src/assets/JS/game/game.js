@@ -23,17 +23,17 @@ export function buildArrayCards(numberOfElements, numberPerCard) {
       );
    }
 
-   const arrayOfPairsOfElements = Array(ratioForBuildInitArray)
+   const arrayPairsOfElements = Array(ratioForBuildInitArray)
       .fill(0)
       .map((_, index) => {
          return [buildDataOfCard(index + 1), buildDataOfCard(index + 1)];
       });
 
-   return arrayOfPairsOfElements.flat();
+   return arrayPairsOfElements.flat();
 }
 
 /**
- * Shuffle elements in an Array
+ * Randomize elements in an Array
  * @param {any[]} cardsArray
  * @returns {any[]} (new Array)
  */
@@ -114,6 +114,7 @@ function reInitAfterTry(target, state, timeBeforeReinit) {
  * @param {string} action
  */
 function winOrLose(state, targetsHTML, action) {
+   // for bonus end of game
    let scoreMultiplyPerLife;
 
    switch (action) {
@@ -121,7 +122,7 @@ function winOrLose(state, targetsHTML, action) {
          updateGameState(targetsHTML, "score", state);
          if (state.isOver()) {
             scoreMultiplyPerLife = state._score * state._life;
-            $("#game-cont").classList.add("blur");
+            addBlur("#game-cont");
             displayGameInfos([targetsHTML[0], scoreMultiplyPerLife]);
             createPopUp($("main"), true, scoreMultiplyPerLife);
          }
@@ -129,13 +130,20 @@ function winOrLose(state, targetsHTML, action) {
       case "lose":
          updateGameState(targetsHTML, "life", state);
          if (state.isOver()) {
-            $("#game-cont").classList.add("blur");
+            addBlur("#game-cont");
             createPopUp($("main"), false, state._score);
          }
          break;
       default:
          throw Error(`Bad parameter action, given: ${action}`);
    }
+}
+
+/**
+ * @param {string} tagOfTarget
+ */
+function addBlur(tagOfTarget) {
+   $(tagOfTarget).classList.add("blur");
 }
 
 /**
@@ -197,15 +205,20 @@ function createPopUp(target, winOrLose, score) {
    let message;
    switch (true) {
       case winOrLose:
-         message = strMess("gagné", score);
+         message = strMessWinOrLose("gagné", score);
          buildAndDisplayPopup(target, message);
          break;
       case !winOrLose:
-         message = strMess("perdu", score);
+         message = strMessWinOrLose("perdu", score);
          buildAndDisplayPopup(target, message);
    }
 }
 
-function strMess(wOrL, score) {
+/**
+ * @param {["win", "lose"]} wOrL
+ * @param {string | number} score
+ * @returns {string}
+ */
+function strMessWinOrLose(wOrL, score) {
    return `Vous avez ${wOrL} ! votre score: ${score}`;
 }
