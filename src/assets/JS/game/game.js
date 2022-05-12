@@ -215,7 +215,7 @@ function createPopUp(target, winOrLose, score) {
 }
 
 /**
- * @param {["win", "lose"]} wOrL (like tupple lol)
+ * @param {["win", "lose"]} wOrL (like tupple)
  * @param {string | number} score
  * @returns {string}
  */
