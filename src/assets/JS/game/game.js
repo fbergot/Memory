@@ -177,7 +177,7 @@ function updateGameState(target, scoreOrLife, state) {
  * @param {() => void} callback
  */
 export function setAddEventListener(elements, typeOfEvent, callback) {
-   const arrayFromNodeList = Array.from(elements);
+   const arrayFromNodeList = [...elements];
 
    arrayFromNodeList.forEach((element) => {
       element.addEventListener(typeOfEvent, callback, false);
@@ -215,7 +215,7 @@ function createPopUp(target, winOrLose, score) {
 }
 
 /**
- * @param {["win", "lose"]} wOrL
+ * @param {["win", "lose"]} wOrL (like tupple lol)
  * @param {string | number} score
  * @returns {string}
  */

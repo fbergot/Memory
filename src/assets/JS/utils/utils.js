@@ -39,6 +39,8 @@ export function buildAndDisplayPopup(target, message) {
    const h2 = document.createElement("h2");
    const but = document.createElement("button");
 
+   but.addEventListener("click", () => window.location.reload());
+
    h2.innerText = message;
    but.innerText = "Rejouer";
 
