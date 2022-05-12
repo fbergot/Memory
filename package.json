@@ -6,7 +6,8 @@
    "author": "fbergot <florian.bergot564@gmail.com>",
    "license": "MIT",
    "scripts": {
-      "build": "webpack --watch"
+      "build_w": "webpack --watch",
+      "build": "webpack"
    },
    "devDependencies": {
       "@babel/core": "^7.17.8",
